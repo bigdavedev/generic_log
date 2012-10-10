@@ -16,7 +16,7 @@ namespace
     void pause_console()
     {
         std::cout << "Press ENTER to continue... " << std::flush;
-        std::cin.ignore( std::numeric_limits <std::streamsize> ::max(), '\n' );
+        std::cin.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
     }
 }
 
@@ -40,6 +40,8 @@ int main()
     std::cout << "**********************************************************\n";
 
     const bool result = test_log();
+
+    std::cout << "The log tests were " << (result ? "successful" : "unsuccessful") << std::endl;
 
     pause_console();
 }

@@ -14,21 +14,13 @@
 //=============================
 /// 
 /// \file
-/// generic_log writing policy header
+/// generic_log log header
 ///
-/// This file contains the writing policy definitions.\n
+/// This file contains the the actual log class.
 //=============================
 
 #pragma once
 
 namespace logger
 {
-    //=============================
-    /// A list of supported writing policies
-    ///
-    /// -- Visual Studio output window
-    /// -- stdout
-    /// -- fstream
-    /// -- Custom window
-    //=============================
 }
