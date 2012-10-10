@@ -9,6 +9,17 @@ namespace
     }
 }
 
+#include <limits>
+
+namespace 
+{
+    void pause_console()
+    {
+        std::cout << "Press ENTER to continue... " << std::flush;
+        std::cin.ignore( std::numeric_limits <std::streamsize> ::max(), '\n' );
+    }
+}
+
 int main()
 {
     std::cout << "**********************************************************\n";
@@ -28,5 +39,7 @@ int main()
     std::cout << "**********************************************************\n";
     std::cout << "**********************************************************\n";
 
-    return test_log() ? 0 : 1;
+    const bool result = test_log();
+
+    pause_console();
 }
