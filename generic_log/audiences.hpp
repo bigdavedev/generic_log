@@ -53,6 +53,7 @@ namespace logger
         >
         struct audience_list : std::tuple< _Audience1, _Audience2, _Audience3 >
         {
+            static_assert(!std::is_same< _Audience1, std::tr1::_Nil >::value, "Error, you must specify at least one audience member.");
         };
 
         //=============================
