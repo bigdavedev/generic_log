@@ -33,47 +33,47 @@ namespace logger
         struct message {};
         struct info    {};
         struct debug   {};
-    }
 
-    template< typename _Severity >
-    std::string const get_name(_Severity const severity)
-    {
-        return std::move(std::string("Unknown severity level"));
-    }
+        template< typename _Severity >
+        std::string const get_name(_Severity const severity)
+        {
+            return std::move(std::string("Unknown severity level"));
+        }
 
-    template< >
-    std::string const get_name< severity::fatal >(severity::fatal const severity)
-    {
-        return std::move(std::string("Fatal"));
-    }
+        template< >
+        std::string const get_name< severity::fatal >(severity::fatal const severity)
+        {
+            return std::move(std::string("Fatal"));
+        }
 
-    template< >
-    std::string const get_name< severity::error >(severity::error const severity)
-    {
-        return std::move(std::string("Error"));
-    }
+        template< >
+        std::string const get_name< severity::error >(severity::error const severity)
+        {
+            return std::move(std::string("Error"));
+        }
 
-    template< >
-    std::string const get_name< severity::warning >(severity::warning const severity)
-    {
-        return std::move(std::string("Warning"));
-    }
+        template< >
+        std::string const get_name< severity::warning >(severity::warning const severity)
+        {
+            return std::move(std::string("Warning"));
+        }
 
-    template< >
-    std::string const get_name< severity::message >(severity::message const severity)
-    {
-        return std::move(std::string("Message"));
-    }
+        template< >
+        std::string const get_name< severity::message >(severity::message const severity)
+        {
+            return std::move(std::string("Message"));
+        }
 
-    template< >
-    std::string const get_name< severity::info >(severity::info const severity)
-    {
-        return std::move(std::string("Info"));
-    }
+        template< >
+        std::string const get_name< severity::info >(severity::info const severity)
+        {
+            return std::move(std::string("Info"));
+        }
 
-    template< >
-    std::string const get_name< severity::debug >(severity::debug const severity)
-    {
-        return std::move(std::string("Debug"));
+        template< >
+        std::string const get_name< severity::debug >(severity::debug const severity)
+        {
+            return std::move(std::string("Debug"));
+        }
     }
 }

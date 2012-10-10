@@ -30,30 +30,30 @@ namespace logger
         struct developer {};
         struct support   {};
         struct user      {};
-    }
 
-    template< typename _Audience >
-    std::string const get_name(_Audience const audience)
-    {
-        return std::move(std::string("Unknown audience"));
-    }
+        template< typename _Audience >
+        std::string const get_name(_Audience const audience)
+        {
+            return std::move(std::string("Unknown audience"));
+        }
 
-    template< >
-    std::string const get_name< audience::developer >(audience::developer const audience)
-    {
-        return std::move(std::string("Developer"));
-    }
+        template< >
+        std::string const get_name< audience::developer >(audience::developer const audience)
+        {
+            return std::move(std::string("Developer"));
+        }
 
-    template< >
-    std::string const get_name< audience::support >(audience::support const audience)
-    {
-        return std::move(std::string("Support"));
-    }
+        template< >
+        std::string const get_name< audience::support >(audience::support const audience)
+        {
+            return std::move(std::string("Support"));
+        }
 
-    template< >
-    std::string const get_name< audience::user >(audience::user const audience)
-    {
-        return std::move(std::string("User"));
+        template< >
+        std::string const get_name< audience::user >(audience::user const audience)
+        {
+            return std::move(std::string("User"));
+        }
     }
 
 }
