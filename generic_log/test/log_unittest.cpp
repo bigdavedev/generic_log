@@ -1,10 +1,43 @@
 #include "..\logging.hpp"
 #include <iostream>
+#include <sstream>
+#define NOMINMAX
+#include <Windows.h>
 
-namespace
+namespace test
 {
+    struct test_writer
+    {
+    public:
+        static void begin_write()
+        {
+            ::OutputDebugStringA("Starting to test the default formatting policy\n");
+            ::OutputDebugStringA("//=====================\n");
+        }
+
+        static void end_write()
+        {
+            ::OutputDebugStringA("\n");
+            ::OutputDebugStringA("//=====================\n");
+            ::OutputDebugStringA("Test over.\n");
+        }
+
+        template< typename _Type >
+        static void write(_Type const parameter)
+        {
+            std::stringstream buffer;
+            buffer << parameter;
+            ::OutputDebugStringA(buffer.str().c_str());
+        }
+    };
+
     bool test_log()
     {
+        using namespace logger;
+
+        auto audience_members = std::make_tuple(audience::developer(), audience::support());
+        auto severity = std::make_tuple(severity::debug());
+        visualstudio_formatter::write_message< test_writer >(__FILE__, __LINE__, audience_members, severity, std::make_tuple("Hello", "World", 256, 512.5f));
         return true;
     }
 }
@@ -39,7 +72,7 @@ int main()
     std::cout << "**********************************************************\n";
     std::cout << "**********************************************************\n";
 
-    const bool result = test_log();
+    const bool result = test::test_log();
 
     std::cout << "The log tests were " << (result ? "successful" : "unsuccessful") << std::endl;
 

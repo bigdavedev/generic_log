@@ -44,6 +44,9 @@
 //=============================
 #include "audiences.hpp"
 #include "severities.hpp"
+#include "meta\meta.hpp"
+
+#include <functional>
 
 namespace logger
 {
@@ -74,8 +77,21 @@ namespace logger
     class base_formatting_policy
     {
     public:
-        typedef typename _DerivedFormatter formatter;
+        typedef typename _DerivedFormatter formatter; ///< Convenience typedef
+        typedef base_formatting_policy< formatter > this_type;
 
+        //=============================
+        /// Function for sending messages to the desired
+        /// output.
+        ///
+        /// We need to explicitly supply the writing policy
+        /// as a template parameter since the formatter
+        /// doesn't, and rightfully shouldn't have a clue
+        /// about where the message is headed. Here we prepare
+        /// the write policy before passing the work of
+        /// formatting on to the derived class.  We also need
+        /// to inform the write policy that we are done formatting.
+        //=============================
         template
         < 
             typename _WritingPolicy, ///< Eventual output location of message
@@ -83,26 +99,45 @@ namespace logger
             typename _Severity,      ///< Log message level
             typename _ParameterList  ///< Tuple of parameters to insert
         >
-        static void write_message(char const* filename, unsigned int const linenumber, _ParameterList parameter_list)
+        static void write_message(char const* filename, unsigned int const linenumber, _AudienceList audience_list, _Severity severity_list, _ParameterList parameter_list)
         {
-            typedef typename _WritingPolicy output;
-            output::begin_write();
+            typename _WritingPolicy::begin_write();
 
-            formatter::write< output, _AudienceList, _Severity >(filename, linenumber, parameter_list);
+            formatter::write< typename _WritingPolicy >(filename, linenumber, audience_list, severity_list, parameter_list);
 
-            output::end_write();
+            typename _WritingPolicy::end_write();
         }
 
     protected:
         template
         <
-            typename _WritingPolicy,
-            typename _Type
+            typename _WritingPolicy, ///< Where to send the parameters
+            typename _ParameterPack,  ///< A tuple containing all the parameters
+            std::size_t _Index
         >
-        static void write_params(_Type parameter)
+        struct write_params
         {
-            _WritePolicy::write(parameter);
-        }
+            static void apply(_ParameterPack parameters)
+            {
+                write_params< typename _WritingPolicy, _ParameterPack, _Index - 1 >::apply(parameters);
+                write_obj< typename _WritingPolicy >(std::get< _Index >(parameters));
+                write_obj< typename _WritingPolicy >(" ");
+            }
+        };
+        
+        template
+        <
+            typename _WritingPolicy, ///< Where to send the parameters
+            typename _ParameterPack  ///< A tuple containing all the parameters
+        >
+        struct write_params< _WritingPolicy, _ParameterPack, 0 >
+        {
+            static void apply(_ParameterPack parameters)
+            {
+                write_obj< typename _WritingPolicy >(std::get< 0 >(parameters));
+                write_obj< typename _WritingPolicy >(" ");
+            }
+        };
 
         template
         <
@@ -111,7 +146,7 @@ namespace logger
         >
         static void write_obj(_Type object)
         {
-            _WritePolicy::write(object);
+            typename _WritingPolicy::write(object);
         }
 
     private:
@@ -122,7 +157,7 @@ namespace logger
         >
         static void write_param(_Type parameter)
         {
-            _WritePolicy::write(parameter);
+            typename _WritingPolicy::write(parameter);
         }
     };
 
@@ -138,19 +173,42 @@ namespace logger
             typename _Severity,      ///< Log message level
             typename _ParameterList  ///< Tuple of parameters to insert
         >
-        static void write(char const* filename, unsigned int const linenumber, _ParameterList parameter_list)
+        static void write(char const* filename, unsigned int const linenumber, _AudienceList audience_list, _Severity severity_list, _ParameterList parameter_list)
         {
-            typedef typename _WritingPolicy output;
+            write_obj< typename _WritingPolicy >(audience::get_name(std::get<0>(audience_list)));
+            write_obj< typename _WritingPolicy >(':');
+            write_obj< typename _WritingPolicy >(severity::get_name(std::get<0>(severity_list)));
+            write_obj< typename _WritingPolicy >(" in ");
+            write_obj< typename _WritingPolicy >(filename);
+            write_obj< typename _WritingPolicy >('@');
+            write_obj< typename _WritingPolicy >(linenumber);
+            write_obj< typename _WritingPolicy >(" - ");
 
-            write_obj< output >(audience::get_name(_AudienceList.get<0>()));
-            write_obj< output >(':');
-            write_obj< output >(severity::get_name(_Severity));
-            write_obj< output >("in ");
-            write_obj< output >(filename);
-            write_obj< output >('@');
-            write_obj< output >(linenumber);
+            write_params< typename _WritingPolicy, _ParameterList, std::tuple_size< _ParameterList >::value - 1 >::apply(parameter_list);
+        }
+    };
 
-            write_params< output >(parameter_list);
+    class visualstudio_formatter
+        : public base_formatting_policy< visualstudio_formatter >
+    {
+    public:
+        template
+        < 
+            typename _WritingPolicy, ///< Eventual output location of message
+            typename _AudienceList,  ///< The people who should be interested
+            typename _Severity,      ///< Log message level
+            typename _ParameterList  ///< Tuple of parameters to insert
+        >
+        static void write(char const* filename, unsigned int const linenumber, _AudienceList audience_list, _Severity severity_list, _ParameterList parameter_list)
+        {
+            write_obj< typename _WritingPolicy >(filename);
+            write_obj< typename _WritingPolicy >("(");
+            write_obj< typename _WritingPolicy >(linenumber);
+            write_obj< typename _WritingPolicy >("): ");
+            write_obj< typename _WritingPolicy >(severity::get_name(std::get<0>(severity_list)));
+            write_obj< typename _WritingPolicy >(": ");
+
+            write_params< typename _WritingPolicy, _ParameterList, std::tuple_size< _ParameterList >::value - 1 >::apply(parameter_list);
         }
     };
 }
