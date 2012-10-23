@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "config.h"
+
 namespace logger
 {
     //=============================
@@ -31,4 +33,66 @@ namespace logger
     /// -- fstream
     /// -- Custom window
     //=============================
+    
+    //=============================
+    /// Writers must implement the following public interface:
+    ///
+    /// -- static void begin_write()
+    /// -- static void end_write()
+    /// -- template< typename _Type > static void write(_Type const message)
+    //=============================
+
+    //=============================
+    /// Default writer outputs to stdout
+    //=============================
+    struct default_writer
+    {
+        static void begin_write()
+        {
+        }
+
+        static void end_write()
+        {
+            std::cout << std::flush;
+        }
+
+        template< typename _Type >
+        static void write(_Type const message)
+        {
+            std::cout << message;
+        }
+    };
+
+#if defined (WIN32) || defined (_WIN32)
+#define NOMINMAX
+#include <Windows.h>
+
+    //=============================
+    /// Output to the Visual Studio spew
+    ///
+    /// The cool thing with this is that, when used
+    /// with the visualstudio_formatter, we can
+    /// double click and navigate to the line where
+    /// the logger was invoked.
+    //=============================
+    struct visualstudio_writer
+    {
+        static void begin_write()
+        {
+        }
+
+        static void end_write()
+        {
+            OutputDebugString(WIDEN("\n"));
+        }
+
+        template< typename _Type >
+        static void write(_Type const message)
+        {
+            stringstream buffer;
+            buffer << message;
+            OutputDebugString(buffer.str().c_str());
+        }
+    };
+#endif
 }
