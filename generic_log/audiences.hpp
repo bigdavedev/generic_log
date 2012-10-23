@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <string>
+#include "config.h"
 #include <tuple>
 
 namespace logger
@@ -67,36 +67,36 @@ namespace logger
         /// \endverbatim
         //=============================
         template< typename _Audience >
-        std::string const get_name(_Audience const audience)
+        string const get_name(_Audience const audience)
         {
-            return std::move(std::string("Unknown audience"));
+            return std::move(string("Unknown audience"));
         }
 
         //=============================
         /// Specialisation for developer audience tag
         //=============================
         template< >
-        std::string const get_name< audience::developer >(audience::developer const audience)
+        string const get_name< audience::developer >(audience::developer const audience)
         {
-            return std::move(std::string("Developer"));
+            return std::move(string(WIDEN("Developer")));
         }
         
         //=============================
         /// Specialisation for support audience tag
         //=============================
         template< >
-        std::string const get_name< audience::support >(audience::support const audience)
+        string const get_name< audience::support >(audience::support const audience)
         {
-            return std::move(std::string("Support"));
+            return std::move(string(WIDEN("Support")));
         }
         
         //=============================
         /// Specialisation for support audience tag
         //=============================
         template< >
-        std::string const get_name< audience::user >(audience::user const audience)
+        string const get_name< audience::user >(audience::user const audience)
         {
-            return std::move(std::string("User"));
+            return std::move(string(WIDEN("User")));
         }
     }
 

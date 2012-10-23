@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <string>
+#include "config.h"
 
 namespace logger
 {
@@ -48,54 +48,54 @@ namespace logger
         /// \endverbatim
         //=============================
         template< typename _Severity >
-        std::string const get_name(_Severity const severity)
+        string const get_name(_Severity const severity)
         {
-            return std::move(std::string("Unknown severity level"));
+            return std::move(string(WIDEN("Unknown severity level")));
         }
         
         //=============================
         /// Specialisation for fatal error tag
         //=============================
         template< >
-        std::string const get_name< severity::fatal >(severity::fatal const severity)
+        string const get_name< severity::fatal >(severity::fatal const severity)
         {
-            return std::move(std::string("Fatal"));
+            return std::move(string(WIDEN("Fatal")));
         }
         
         //=============================
         /// Specialisation for error tag
         //=============================
         template< >
-        std::string const get_name< severity::error >(severity::error const severity)
+        string const get_name< severity::error >(severity::error const severity)
         {
-            return std::move(std::string("Error"));
+            return std::move(string(WIDEN("Error")));
         }
         
         //=============================
         /// Specialisation for the warning tag
         //=============================
         template< >
-        std::string const get_name< severity::warning >(severity::warning const severity)
+        string const get_name< severity::warning >(severity::warning const severity)
         {
-            return std::move(std::string("Warning"));
+            return std::move(string(WIDEN("Warning")));
         }
         
         //=============================
         /// Specialisation for the info tag
         //=============================
         template< >
-        std::string const get_name< severity::info >(severity::info const severity)
+        string const get_name< severity::info >(severity::info const severity)
         {
-            return std::move(std::string("Info"));
+            return std::move(string(WIDEN("Info")));
         }
         
         //=============================
         /// Specialisation for the debug tag
         //=============================
         template< >
-        std::string const get_name< severity::debug >(severity::debug const severity)
+        string const get_name< severity::debug >(severity::debug const severity)
         {
-            return std::move(std::string("Debug"));
+            return std::move(string(WIDEN("Debug")));
         }
     }
 }

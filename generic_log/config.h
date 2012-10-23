@@ -24,7 +24,25 @@
 
 #pragma once
 
+#if defined(UNICODE)
+#  define WIDEN(x) L##x
+#else
+#  define WIDEN(x) x
+#endif
+
+#if defined(USE_STL_ALLOC)
+#  include <string>
+#  include <sstream>
+
 namespace logger
 {
-
+#if defined(UNICODE)
+    typedef std::wstring       string;
+    typedef std::wstringstream stringstream;
+#else
+    typedef std::string       string;
+    typedef std::stringstream stringstream;
+#endif
 }
+#endif
+

@@ -11,23 +11,31 @@ namespace test
     public:
         static void begin_write()
         {
-            ::OutputDebugStringA("Starting to test the default formatting policy\n");
-            ::OutputDebugStringA("//=====================\n");
+            ::OutputDebugString(WIDEN("Starting to test the default formatting policy\n"));
+            ::OutputDebugString(WIDEN("//=====================\n"));
         }
 
         static void end_write()
         {
-            ::OutputDebugStringA("\n");
-            ::OutputDebugStringA("//=====================\n");
-            ::OutputDebugStringA("Test over.\n");
+            ::OutputDebugString(WIDEN("\n"));
+            ::OutputDebugString(WIDEN("//=====================\n"));
+            ::OutputDebugString(WIDEN("Test over.\n"));
         }
 
         template< typename _Type >
         static void write(_Type const parameter)
         {
-            std::stringstream buffer;
+            logger::stringstream buffer;
             buffer << parameter;
-            ::OutputDebugStringA(buffer.str().c_str());
+            ::OutputDebugString(buffer.str().c_str());
+        }
+        
+        template< >
+        static void write(wchar_t const* parameter)
+        {
+            logger::stringstream buffer;
+            buffer << parameter;
+            ::OutputDebugString(buffer.str().c_str());
         }
     };
 
